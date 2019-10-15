@@ -97,12 +97,12 @@ pokemon_stats <- aggregate(cbind(attack, defense, speed, sp_attack, sp_defense) 
 pokemon_stats
 ```
 
-Let's do a boxplot. we'll subset to just the first generation as to not crowd the plot.
+Let's do a boxplot. we'll subset to just the first generation as to not overcrowd the plot.
 ```{r}
 boxplot(attack ~ type1 + generation, data = subset(pokemon2, pokemon2$generation == 1)) 
 ```
 
-Let's plot the aggregated data. We'll use the `ggplot2` package as it will give us more control over the plot.
+Let's plot the aggregated/summarized data. We'll use the `ggplot2` package as it will give us more control over the plot.
 ```{r}
 library(ggplot2)
 
@@ -112,6 +112,8 @@ ggplot(pokemon_stats, aes(type, attack, color = generation)) +
   scale_fill_brewer(palette = "Set1") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
+
+If you choose to continue learning R, you'll probably encounter two other frameworks for data wrangling, Tidyverse and DataTable. Both frameworks work to extend the concept of a dataframe. We'll start with the Tidyverse. 
 
 ```{r dplyr}
 library(dplyr)
@@ -125,10 +127,9 @@ pkmn_stats_tidy <- pokemon_first_2_gen %>%
             sp_defense = mean(sp_defense))
 pkmn_stats_tidy
 ```
+Tidyverse actually refers to a suite of packages developed by people at RStudio. You'll notice that there is an emphasis on functions having verb-like names. 
 
-```{r}
-print.data.frame(pkmn_stats_tidy)
-```
+Next up, DataTable. DataTable utilizes the format `DT[i, j, k]` where `i` represents which rows, `k` represents what calculations to do, and `k` represents grouping variables.
 
 ```{r data.table}
 library(data.table) 
@@ -144,4 +145,3 @@ pkmn_stats_dt <- pokemon_dt[generation == 1,
 
 pkmn_stats_dt 
 ```
-
