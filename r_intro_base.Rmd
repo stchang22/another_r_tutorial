@@ -27,7 +27,7 @@ x2 <- rexp(20)
 x2
 ```
 
-Let's do a quick plot of `r x1`. If you only supply 1 vector, the `r plot` function will plot by index.
+Let's do a quick plot of `x1`. If you only supply 1 vector, the `plot` function will plot by index.
 ```{r}
 plot(x1)
 ```
@@ -37,7 +37,7 @@ plot(runif(10), x1)
 ```
 
 
-Vectors allow index retrieval. "letters" is a built-in R vector that contains the lowercase alphabet.  
+Vectors allow index retrieval. ` letters` is a built-in R vector that contains the lowercase alphabet.  
 Index starts at 1.
 ```{r vectors2}
 x3 <- letters[10]
@@ -51,7 +51,7 @@ list1 <- list(x1, x2, x3)
 ```
 
 
-Base R has a famous family of functions that I like to call the "apply" family. `r lapply` applies a function to each element of the list. Below, we'll drop the last element from the list.
+Base R has a famous family of functions that I like to call the "apply" family. `lapply` applies a function to each element of the list. Below, we'll drop the last element from the list.
 ```{r}
 lapply(list1[-3], mean) 
 
@@ -84,14 +84,14 @@ Even logical indices!
 head(pokemon[, c(T, T, F, T)])
 ```
 
-We can use the `r subset` function to, well, subset. We'll subset the dataframe to the first 2 generations. We'll then use the `r unique` function as a check.
+We can use the ` subset` function to, well, subset. We'll subset the dataframe to the first 2 generations. We'll then use the ` unique` function as a check.
 ```{r}
 pokemon_first_2_gen <- subset(pokemon2, pokemon2$generation %in% c(1, 2)) 
 
 unique(pokemon_first_2_gen$generation)
 ```
 
-If you look at the documentation, there are many ways to set up the `r aggregate` function. Here's what I think is the easiest. We'll find the average stats by type and generation.
+If you look at the documentation, there are many ways to set up the `aggregate` function. Here's what I think is the easiest. We'll find the average stats by type and generation.
 ```{r}
 pokemon_stats <- aggregate(cbind(attack, defense, speed, sp_attack, sp_defense) ~ type1 + generation, data = pokemon_first_2_gen, mean)
 pokemon_stats
@@ -102,7 +102,7 @@ Let's do a boxplot. we'll subset to just the first generation as to not crowd th
 boxplot(attack ~ type1 + generation, data = subset(pokemon2, pokemon2$generation == 1)) 
 ```
 
-Let's plot the aggregated data. We'll use `r ggplot2` as it will give us more control over the plot.
+Let's plot the aggregated data. We'll use the `ggplot2` package as it will give us more control over the plot.
 ```{r}
 library(ggplot2)
 
