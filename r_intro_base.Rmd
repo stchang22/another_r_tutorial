@@ -105,11 +105,9 @@ boxplot(attack ~ type1 + generation, data = subset(pokemon2, pokemon2$generation
 Let's plot the aggregated data. We'll use `r ggplot2` as it will give us more control over the plot.
 ```{r}
 library(ggplot2)
-library(magrittr)
 
-pokemon_stats %>%
-  mutate(type = as.factor(type1)) %>%
-ggplot(aes(type, attack, color = generation)) + 
+pokemon_stats$type = as.factor(pokemon_stats$type1)
+ggplot(pokemon_stats, aes(type, attack, color = generation)) + 
   geom_point(stat = "identity") +  
   scale_fill_brewer(palette = "Set1") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
