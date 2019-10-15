@@ -50,6 +50,7 @@ Each element of the list can be a different data structure. Here, we'll just use
 list1 <- list(x1, x2, x3) 
 ```
 
+
 Base R has a famous family of functions that I like to call the "apply" family. `r lapply` applies a function to each element of the list. Below, we'll drop the last element from the list.
 ```{r}
 lapply(list1[[-3]], mean) 
