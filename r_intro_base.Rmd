@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Another R Tutorial"
 author: "steven"
 date: "October 14, 2019"
 output: html_document
@@ -9,22 +9,140 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+This introduction will focus on base R (and introduce tidyverse and RDataTable at the end).  
+We will begin with creating vectors.
+```{r vectors}
+x1 <- rpois(10, lambda = 1) 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+length(x1)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+x1 
 
-```{r cars}
-summary(cars)
+x1 + 1 
+
+x1 ^ 2 
+```
+```{r}
+x2 <- rexp(20)
+x2
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+Let's do a quick plot of `r x1`. If you only supply 1 vector, the `r plot` function will plot by index.
+```{r}
+plot(x1)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+plot(runif(10), x1)
+```
+
+
+Vectors allow index retrieval. "letters" is a built-in R vector that contains the lowercase alphabet.  
+Index starts at 1.
+```{r vectors2}
+x3 <- letters[10]
+x3
+```
+
+Lists are the foundation of R's various data structures. They're powerful but can be tricky to use at first.  
+Each element of the list can be a different data structure. Here, we'll just use the three vectors from before.
+```{r lists}
+list1 <- list(x1, x2, x3) 
+```
+
+Base R has a famous family of functions that I like to call the "apply" family. `r lapply` applies a function to each element of the list. Below, we'll drop the last element from the list.
+```{r}
+lapply(list1[[-3]], mean) 
+
+lapply(list1[[-3]], function(x) sum(x^2)) 
+```
+
+You will most likely use dataframes instead. Dataframes can be thought of as a special case of lists (i.e. a "flat" list). We'll read in a CSV file.
+```{r}
+pokemon <- read.csv("pokemon.csv", header = T, stringsAsFactors = F)
+head(pokemon)
+```
+
+Let's take a quick look at what columns are in the dataframe.
+```{r}
+colnames(pokemon)
+```
+
+One recurring theme in R is that there are several ways to do the same thing. Here's one way of subsetting columns.
+```{r}
+pokemon2 <- pokemon[, c("type1", "name", "is_legendary", "generation", "evolution_stage", "attack", "defense", "speed", "sp_attack", "sp_defense")] 
+```
+
+You can also use column indices.
+```{r}
+head(pokemon[, c(37, 31, 41)])
+```
+
+Even logical indices!
+```{r}
+head(pokemon[, c(T, T, F, T)])
+```
+
+We can use the `r subset` function to, well, subset. We'll subset the dataframe to the first 2 generations. We'll then use the `r unique` function as a check.
+```{r}
+pokemon_first_2_gen <- subset(pokemon2, pokemon2$generation %in% c(1, 2)) 
+
+unique(pokemon_first_2_gen$generation)
+```
+
+If you look at the documentation, there are many ways to set up the `r aggregate` function. Here's what I think is the easiest. We'll find the average stats by type and generation.
+```{r}
+pokemon_stats <- aggregate(cbind(attack, defense, speed, sp_attack, sp_defense) ~ type1 + generation, data = pokemon_first_2_gen, mean)
+pokemon_stats
+```
+
+Let's do a boxplot. we'll subset to just the first generation as to not crowd the plot.
+```{r}
+boxplot(attack ~ type1 + generation, data = subset(pokemon2, pokemon2$generation == 1)) 
+```
+
+Let's plot the aggregated data. We'll use `r ggplot2` as it will give us more control over the plot.
+```{r}
+library(ggplot2)
+library(magrittr)
+
+pokemon_stats %>%
+  mutate(type = as.factor(type1)) %>%
+ggplot(aes(type, attack, color = generation)) + 
+  geom_point(stat = "identity") +  
+  scale_fill_brewer(palette = "Set1") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+```{r dplyr}
+library(dplyr)
+pkmn_stats_tidy <- pokemon_first_2_gen %>% 
+  filter(generation == 1) %>% 
+  group_by(type1) %>% 
+  summarize(attack = mean(attack), 
+            defense = mean(defense), 
+            speed = mean(speed), 
+            sp_attack = mean(sp_attack), 
+            sp_defense = mean(sp_defense))
+pkmn_stats_tidy
+```
+
+```{r}
+print.data.frame(pkmn_stats_tidy)
+```
+
+```{r data.table}
+library(data.table) 
+
+pokemon_dt <- fread(file = "pokemon.csv") 
+pkmn_stats_dt <- pokemon_dt[generation == 1,  
+                             .(attack = mean(attack), 
+                                defense = mean(defense), 
+                                speed = mean(speed), 
+                                sp_attack = mean(sp_attack), 
+                                sp_defense = mean(sp_defense)), 
+                             by = "type1"][order(type1)] 
+
+pkmn_stats_dt 
+```
+
