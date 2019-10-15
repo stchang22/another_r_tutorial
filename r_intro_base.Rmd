@@ -50,11 +50,12 @@ Each element of the list can be a different data structure. Here, we'll just use
 list1 <- list(x1, x2, x3) 
 ```
 
+
 Base R has a famous family of functions that I like to call the "apply" family. `r lapply` applies a function to each element of the list. Below, we'll drop the last element from the list.
 ```{r}
-lapply(list1[[-3]], mean) 
+lapply(list1[-3], mean) 
 
-lapply(list1[[-3]], function(x) sum(x^2)) 
+lapply(list1[-3], function(x) sum(x^2)) 
 ```
 
 You will most likely use dataframes instead. Dataframes can be thought of as a special case of lists (i.e. a "flat" list). We'll read in a CSV file.
